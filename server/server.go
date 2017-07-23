@@ -10,6 +10,7 @@ import (
 func Server() http.Handler {
 	r := mux.NewRouter()
 	r.HandleFunc("/subscription", handlers.SubscriptionHandler).Name("/subscription").Methods("GET")
+	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler).Name("/subscription").Methods("POST")
 	r.HandleFunc("/user", handlers.UserHandler).Name("/user").Methods("GET")
 	return r
 }

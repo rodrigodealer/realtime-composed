@@ -12,5 +12,6 @@ func Server() http.Handler {
 	r.HandleFunc("/subscription", handlers.SubscriptionHandler).Name("/subscription").Methods("GET")
 	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler).Name("/subscription").Methods("POST")
 	r.HandleFunc("/user", handlers.UserHandler).Name("/user").Methods("GET")
+	r.HandleFunc("/healthcheck", handlers.HealthcheckHandler).Name("/healthcheck").Methods("GET")
 	return r
 }

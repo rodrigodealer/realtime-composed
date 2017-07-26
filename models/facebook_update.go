@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"io"
 )
 
 type FacebookUpdate struct {
@@ -18,5 +19,11 @@ type FacebookUpdateEntry struct {
 
 func (m *FacebookUpdate) FromJson(value string) error {
 	err := json.Unmarshal([]byte(value), &m)
+	return err
+}
+
+func (m *FacebookUpdate) FromRequest(body io.ReadCloser) error {
+	decoder := json.NewDecoder(body)
+	err := decoder.Decode(&m)
 	return err
 }

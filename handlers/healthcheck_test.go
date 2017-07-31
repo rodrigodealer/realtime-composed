@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestSuccessfulHealthcheck(t *testing.T) {
@@ -33,16 +32,4 @@ func TestFailedHealthcheck(t *testing.T) {
 
 	assert.Equal(t, res.Code, 500)
 	assert.Equal(t, res.Body.String(), "{\"status\":\"FAILED\",\"services\":[{\"name\":\"elasticsearch\",\"state\":\"FAILED\",\"code\":500}]}\n")
-}
-
-type clientMock struct {
-	mock.Mock
-}
-
-func (o clientMock) Ping() int {
-	args := o.Called()
-	return args.Int(0)
-}
-
-func (o clientMock) Connect() {
 }

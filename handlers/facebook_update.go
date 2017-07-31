@@ -5,12 +5,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/rodrigodealer/realtime/es"
 	"github.com/rodrigodealer/realtime/models"
-
-	elastic "gopkg.in/olivere/elastic.v5"
 )
 
-func FacebookUpdateHandler(client *elastic.Client) func(http.ResponseWriter, *http.Request) {
+func FacebookUpdateHandler(connection es.ElasticSearch) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Body != nil {
 			var facebookUpdate = models.FacebookUpdate{}

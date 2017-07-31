@@ -8,7 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	elastic "gopkg.in/olivere/elastic.v5"
 )
 
 type MockClient struct {
@@ -18,8 +17,8 @@ type MockClient struct {
 func TestSuccessfulSubscriptionPostWithNilBody(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", nil)
 	res := httptest.NewRecorder()
-	m := &elastic.Client{}
-	handler := http.HandlerFunc(FacebookUpdateHandler(m))
+	client := new(clientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client))
 
 	handler.ServeHTTP(res, req)
 
@@ -32,8 +31,8 @@ func TestSuccessfulSubscriptionPostWithBody(t *testing.T) {
 	var jsonStr = []byte(`{"object":"user","entry":[{"uid":"100000610422894","id":"100000610422894","time":1232313,"changed_fields":["friends"]}]}`)
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", bytes.NewBuffer(jsonStr))
 	res := httptest.NewRecorder()
-	m := &elastic.Client{}
-	handler := http.HandlerFunc(FacebookUpdateHandler(m))
+	client := new(clientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client))
 
 	handler.ServeHTTP(res, req)
 
@@ -46,8 +45,8 @@ func TestSuccessfulSubscriptionPostWithWrongJsonInBody(t *testing.T) {
 	var jsonStr = []byte(`{"object": false}`)
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", bytes.NewBuffer(jsonStr))
 	res := httptest.NewRecorder()
-	m := &elastic.Client{}
-	handler := http.HandlerFunc(FacebookUpdateHandler(m))
+	client := new(clientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client))
 
 	handler.ServeHTTP(res, req)
 

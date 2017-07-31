@@ -18,22 +18,20 @@ type EsClient struct {
 }
 
 func (e *EsClient) Connect() {
-	ctx := context.Background()
 	var url = config(os.Getenv("ELASTICSEARCH_URL"))
 	client, err := elastic.NewClient(elastic.SetURL(url), elastic.SetSniff(false))
 	if err != nil {
-		log.Panic(err)
+		log.Panic("Error trying to connect to ElasticSearch: ", err)
+	} else {
+		e.Client = client
 	}
-
-	info, code, _ := client.Ping(url).Do(ctx)
-	log.Printf("Elasticsearch returned with code %d and version %s", code, info.Version.Number)
-	e.Client = client
 }
 
 func (e *EsClient) Ping() int {
 	ctx := context.Background()
 	var url = config(os.Getenv("ELASTICSEARCH_URL"))
-	_, code, _ := e.Client.Ping(url).Do(ctx)
+	info, code, _ := e.Client.Ping(url).Do(ctx)
+	log.Printf("Elasticsearch returned with code %d and version %s", code, info.Version.Number)
 	return code
 }
 

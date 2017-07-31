@@ -1,11 +1,25 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/rodrigodealer/realtime/es"
+	"github.com/rodrigodealer/realtime/models"
 )
 
-func HealthcheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "WORKING")
+func HealthcheckHandler(connection es.ElasticSearch) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var services []models.HealthcheckServices
+		var healthcheck = models.HealthcheckStatus{Status: es.Working, Services: services}
+		healthcheck = es.HealthcheckElasticsearch(services, healthcheck, connection)
+		if healthcheck.Status == es.Failed {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(healthcheck)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, es.Working)
+		}
+	}
 }

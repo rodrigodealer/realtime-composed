@@ -9,13 +9,14 @@ import (
 )
 
 func Server() http.Handler {
-	client := es.Connect()
-	es.IndexSetup(client, "facebook")
+	conn := &es.EsClient{}
+	conn.Connect()
+	conn.IndexSetup("facebook")
 
 	r := mux.NewRouter()
 	r.HandleFunc("/subscription", handlers.SubscriptionHandler).Name("/subscription").Methods("GET")
-	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler(client)).Name("/subscription").Methods("POST")
+	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler(conn.Client)).Name("/subscription").Methods("POST")
 	r.HandleFunc("/user", handlers.UserHandler).Name("/user").Methods("GET")
-	r.HandleFunc("/healthcheck", handlers.HealthcheckHandler).Name("/healthcheck").Methods("GET")
+	r.HandleFunc("/healthcheck", handlers.HealthcheckHandler(conn)).Name("/healthcheck").Methods("GET")
 	return r
 }

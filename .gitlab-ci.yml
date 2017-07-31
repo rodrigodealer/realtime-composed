@@ -16,6 +16,11 @@ build:
 
 test:
   stage: test
+  services:
+  - elasticsearch:latest
+  - redis:latest
+  variables:
+    ELASTICSEARCH_URL: http://elasticsearch:9200
   script:
     - godep restore
     - godep go test -v -cover ./...

@@ -20,9 +20,10 @@ func TestPing(t *testing.T) {
 
 func TestFailedConnection(t *testing.T) {
 	conn := &EsClient{}
+	var oldenv = os.Getenv("ELASTICSEARCH_URL")
 	os.Setenv("ELASTICSEARCH_URL", "localhost:9400")
 	assert.Panics(t, func() { conn.Connect() })
-	os.Unsetenv("ELASTICSEARCH_URL")
+	os.Setenv("ELASTICSEARCH_URL", oldenv)
 }
 
 func TestIndexCreation(t *testing.T) {

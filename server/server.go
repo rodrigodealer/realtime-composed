@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rodrigodealer/realtime/es"
 	"github.com/rodrigodealer/realtime/handlers"
+	"github.com/rodrigodealer/realtime/services"
 )
 
 func Server() http.Handler {
@@ -13,9 +14,11 @@ func Server() http.Handler {
 	conn.Connect()
 	conn.IndexSetup("facebook")
 
+	fbClient := &services.FbClient{}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/subscription", handlers.SubscriptionHandler).Name("/subscription").Methods("GET")
-	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler(conn)).Name("/subscription").Methods("POST")
+	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler(conn, fbClient)).Name("/subscription").Methods("POST")
 	r.HandleFunc("/user", handlers.UserHandler).Name("/user").Methods("GET")
 	r.HandleFunc("/healthcheck", handlers.HealthcheckHandler(conn)).Name("/healthcheck").Methods("GET")
 	return r

@@ -18,7 +18,8 @@ func TestSuccessfulSubscriptionPostWithNilBody(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", nil)
 	res := httptest.NewRecorder()
 	client := new(clientMock)
-	handler := http.HandlerFunc(FacebookUpdateHandler(client))
+	fbClient := new(fbClientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client, fbClient))
 
 	handler.ServeHTTP(res, req)
 
@@ -32,7 +33,8 @@ func TestSuccessfulSubscriptionPostWithBody(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", bytes.NewBuffer(jsonStr))
 	res := httptest.NewRecorder()
 	client := new(clientMock)
-	handler := http.HandlerFunc(FacebookUpdateHandler(client))
+	fbClient := new(fbClientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client, fbClient))
 
 	handler.ServeHTTP(res, req)
 
@@ -46,7 +48,8 @@ func TestSuccessfulSubscriptionPostWithWrongJsonInBody(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/subscription?u=chris", bytes.NewBuffer(jsonStr))
 	res := httptest.NewRecorder()
 	client := new(clientMock)
-	handler := http.HandlerFunc(FacebookUpdateHandler(client))
+	fbClient := new(fbClientMock)
+	handler := http.HandlerFunc(FacebookUpdateHandler(client, fbClient))
 
 	handler.ServeHTTP(res, req)
 

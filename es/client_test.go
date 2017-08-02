@@ -20,7 +20,6 @@ func TestPing(t *testing.T) {
 
 func TestFailedPing(t *testing.T) {
 	conn := &EsClient{}
-	// conn.Connect()
 
 	var ping = conn.Ping()
 	assert.Equal(t, 500, ping)

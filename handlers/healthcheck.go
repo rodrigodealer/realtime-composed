@@ -14,6 +14,7 @@ func HealthcheckHandler(connection es.ElasticSearch) func(w http.ResponseWriter,
 		var services []models.HealthcheckServices
 		var healthcheck = models.HealthcheckStatus{Status: es.Working, Services: services}
 		healthcheck = es.HealthcheckElasticsearch(services, healthcheck, connection)
+		w.Header().Set("Content-Type", "application/json")
 		if healthcheck.Status == es.Failed {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(healthcheck)

@@ -34,11 +34,15 @@ func (e *EsClient) Connect() {
 }
 
 func (e *EsClient) Ping() int {
-	ctx := context.Background()
-	var url = config(os.Getenv("ELASTICSEARCH_URL"))
-	info, code, _ := e.Client.Ping(url).Do(ctx)
-	log.Printf("Elasticsearch returned with code %d and version %s", code, info.Version.Number)
-	return code
+	if e.Client != nil {
+		ctx := context.Background()
+		var url = config(os.Getenv("ELASTICSEARCH_URL"))
+		info, code, _ := e.Client.Ping(url).Do(ctx)
+		log.Printf("Elasticsearch returned with code %d and version %s", code, info.Version.Number)
+		return code
+	} else {
+		return 500
+	}
 }
 
 func (e *EsClient) IndexSetup(index string) {

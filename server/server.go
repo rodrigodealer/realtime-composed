@@ -19,7 +19,7 @@ func Server() http.Handler {
 	r := mux.NewRouter()
 	r.HandleFunc("/subscription", handlers.SubscriptionHandler).Name("/subscription").Methods("GET")
 	r.HandleFunc("/subscription", handlers.FacebookUpdateHandler(conn, fbClient)).Name("/subscription").Methods("POST")
-	r.HandleFunc("/user", handlers.UserHandler).Name("/user").Methods("GET")
+	r.HandleFunc("/user", handlers.UserHandler(conn)).Name("/user").Methods("GET")
 	r.HandleFunc("/healthcheck", handlers.HealthcheckHandler(conn)).Name("/healthcheck").Methods("GET")
 	return r
 }

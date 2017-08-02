@@ -42,3 +42,11 @@ func (o clientMock) Ping() int {
 
 func (o clientMock) Connect() {
 }
+
+func (o clientMock) GetUser(index string, ID string) (models.FacebookUser, error) {
+	var facebookUser models.FacebookUser
+	return facebookUser, nil
+}
+
+func (o clientMock) IndexUser(index string, user *models.FacebookUser) {
+}

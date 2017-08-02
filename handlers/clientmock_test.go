@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 
+	"github.com/rodrigodealer/realtime/models"
 	"github.com/rodrigodealer/realtime/services"
 	"github.com/stretchr/testify/mock"
 )
@@ -17,6 +18,15 @@ func (o clientMock) Ping() int {
 }
 
 func (o clientMock) Connect() {
+}
+
+func (o clientMock) GetUser(index string, ID string) (models.FacebookUser, error) {
+	args := o.Called()
+	var facebookUser models.FacebookUser
+	return facebookUser, args.Error(1)
+}
+
+func (o clientMock) IndexUser(index string, user *models.FacebookUser) {
 }
 
 type fbClientMock struct {

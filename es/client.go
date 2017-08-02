@@ -2,8 +2,12 @@ package es
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
+	"reflect"
+
+	"github.com/rodrigodealer/realtime/models"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
@@ -11,6 +15,8 @@ import (
 type ElasticSearch interface {
 	Connect()
 	Ping() int
+	IndexUser(index string, user *models.FacebookUser)
+	GetUser(index string, ID string) (models.FacebookUser, error)
 }
 
 type EsClient struct {
@@ -51,4 +57,49 @@ func (e *EsClient) IndexSetup(index string) {
 	} else {
 		log.Printf("Index %s already exists, skipping", index)
 	}
+}
+
+func (e *EsClient) IndexUser(index string, user *models.FacebookUser) {
+	ctx := context.Background()
+	indexed, err := e.Client.Index().
+		Index(index).
+		Type(index).
+		Id(user.ID).
+		BodyJson(user).
+		Do(ctx)
+	if err != nil {
+		log.Printf("Error indexing user: %s \n %s", user.ToJson, err.Error)
+	}
+	log.Printf("Indexed tweet %s to index %s\n", indexed.Id, index)
+}
+
+func (e *EsClient) GetUser(index string, ID string) (models.FacebookUser, error) {
+
+	ctx := context.Background()
+	termQuery := elastic.NewTermQuery("id", ID)
+	searchResult, err := e.Client.Search().
+		Index(index).
+		Query(termQuery).
+		From(0).Size(10).
+		Pretty(true).
+		Do(ctx)
+	if err != nil {
+		log.Printf("Error searching for user: \n %s", err)
+	}
+
+	log.Printf("Query took %d milliseconds\n", searchResult.TookInMillis)
+	var facebookUser models.FacebookUser
+	if searchResult.Hits.TotalHits > 0 {
+		log.Printf("Found a total of %d users\n", searchResult.TotalHits())
+
+		for _, item := range searchResult.Each(reflect.TypeOf(facebookUser)) {
+			if user, ok := item.(models.FacebookUser); ok {
+				log.Printf("User %s: %s\n", user.ID, user.Name)
+				return facebookUser, errors.New("No user found")
+			}
+		}
+	} else {
+		log.Printf("No user found: %s", ID)
+	}
+	return facebookUser, errors.New("No user found")
 }

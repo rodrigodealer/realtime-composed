@@ -27,7 +27,7 @@ func (e *EsClient) Connect() {
 	var url = config(os.Getenv("ELASTICSEARCH_URL"))
 	client, err := elastic.NewClient(elastic.SetURL(url), elastic.SetSniff(false))
 	if err != nil {
-		log.Panic("Error trying to connect to ElasticSearch: ", err)
+		log.Panicf("Error trying to connect to ElasticSearch: \n %s \n %s", url, err)
 	} else {
 		e.Client = client
 	}
@@ -99,7 +99,7 @@ func (e *EsClient) GetUser(index string, ID string) (models.FacebookUser, error)
 		for _, item := range searchResult.Each(reflect.TypeOf(facebookUser)) {
 			if user, ok := item.(models.FacebookUser); ok {
 				log.Printf("User %s: %s\n", user.ID, user.Name)
-				return facebookUser, errors.New("No user found")
+				return user, nil
 			}
 		}
 	} else {

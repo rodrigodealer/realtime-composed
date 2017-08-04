@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rodrigodealer/realtime/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -61,4 +62,33 @@ func TestIndexRecreation(t *testing.T) {
 
 	assert.True(t, existed, "Index shoult exists already")
 	conn.Client.DeleteIndex(indexName)
+}
+
+func TestIndexUserAndGetIt(t *testing.T) {
+	conn := &EsClient{}
+	conn.Connect()
+	var now = strconv.Itoa(time.Now().Nanosecond())
+	var indexName = "testindex_" + now
+	var userID = "1"
+	var userName = "Test"
+	facebookUser := &models.FacebookUser{ID: userID, Name: userName}
+	conn.IndexUser(indexName, facebookUser)
+	time.Sleep(1 * time.Second)
+
+	var retrievedUser, _ = conn.GetUser(indexName, userID)
+	assert.Equal(t, userID, retrievedUser.ID)
+	assert.Equal(t, userName, retrievedUser.Name)
+}
+
+func TestTrytoFindUknownUser(t *testing.T) {
+	conn := &EsClient{}
+	conn.Connect()
+	var now = strconv.Itoa(time.Now().Nanosecond())
+	var indexName = "testindex_" + now
+	var userID = "2"
+	conn.IndexSetup(indexName)
+
+	var _, err = conn.GetUser(indexName, userID)
+
+	assert.Equal(t, "No user found", err.Error())
 }

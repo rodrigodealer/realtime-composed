@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rodrigodealer/realtime/models"
 
 	elastic "gopkg.in/olivere/elastic.v5"
@@ -15,7 +16,7 @@ import (
 type ElasticSearch interface {
 	Connect()
 	Ping() int
-	IndexUser(index string, user *models.FacebookUser)
+	IndexUser(index string, user *models.FacebookUser, span opentracing.Span)
 	GetUser(index string, ID string) (models.FacebookUser, error)
 }
 
@@ -63,7 +64,11 @@ func (e *EsClient) IndexSetup(index string) {
 	}
 }
 
-func (e *EsClient) IndexUser(index string, user *models.FacebookUser) {
+func (e *EsClient) IndexUser(index string, user *models.FacebookUser, parentSpan opentracing.Span) {
+	if parentSpan != nil {
+		span := opentracing.StartSpan("Index user", opentracing.ChildOf(parentSpan.Context()))
+		defer span.Finish()
+	}
 	ctx := context.Background()
 	indexed, err := e.Client.Index().
 		Index(index).

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rodrigodealer/realtime/models"
 )
 
@@ -15,17 +16,27 @@ const (
 	Fields    = "id,name,picture{url}"
 )
 
-func GetUid(entry models.FacebookUpdateEntry, token *models.FacebookToken, client FacebookClient) FbResponse {
+func GetUid(entry models.FacebookUpdateEntry, token *models.FacebookToken, client FacebookClient, parentSpan opentracing.Span) FbResponse {
+	if parentSpan != nil {
+		span := opentracing.StartSpan("Get Uid", opentracing.ChildOf(parentSpan.Context()))
+		defer span.Finish()
+	}
 	log.Printf("Getting information for: %s", entry.UID)
 	response, _ := client.GetRequest(FacebookUIDUrl(entry.UID, token.Token))
 	return response
 }
 
-func GetToken(client FacebookClient) *models.FacebookToken {
+func GetToken(client FacebookClient, parentSpan opentracing.Span) *models.FacebookToken {
+	if parentSpan != nil {
+		span := opentracing.StartSpan("Get token", opentracing.ChildOf(parentSpan.Context()))
+		defer span.Finish()
+	}
+
 	response, _ := client.GetRequest(FacebookTokenUrl(AppID, AppSecret))
 	facebookToken := &models.FacebookToken{}
 	facebookToken.FromJson(response.Body)
 	log.Printf("Got token using AppId: %s - %s", AppID, facebookToken.Token)
+
 	return facebookToken
 }
 

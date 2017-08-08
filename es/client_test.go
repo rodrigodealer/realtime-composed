@@ -72,7 +72,7 @@ func TestIndexUserAndGetIt(t *testing.T) {
 	var userID = "1"
 	var userName = "Test"
 	facebookUser := &models.FacebookUser{ID: userID, Name: userName}
-	conn.IndexUser(indexName, facebookUser)
+	conn.IndexUser(indexName, facebookUser, nil)
 	time.Sleep(1 * time.Second)
 
 	var retrievedUser, _ = conn.GetUser(indexName, userID)

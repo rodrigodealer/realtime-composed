@@ -27,7 +27,7 @@ func TestGetUid(t *testing.T) {
 	var list = models.FacebookUpdateEntry{UID: "123"}
 	var token = &models.FacebookToken{Token: "123"}
 
-	var result = GetUid(list, token, fbClient)
+	var result = GetUid(list, token, fbClient, nil)
 
 	assert.Equal(t, 200, result.Code)
 }
@@ -36,7 +36,7 @@ func TestGetToken(t *testing.T) {
 	fbClient := new(fbClientMock)
 	fbClient.On("GetRequest").Return("{\"access_token\":\"1449629478400719\",\"token_type\":\"bearer\"}", 200)
 
-	var result = GetToken(fbClient)
+	var result = GetToken(fbClient, nil)
 	assert.Equal(t, "1449629478400719", result.Token)
 	assert.Equal(t, "bearer", result.Type)
 }

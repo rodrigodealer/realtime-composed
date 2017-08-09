@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/rodrigodealer/realtime/models"
+	"github.com/rodrigodealer/realtime/tracing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -27,7 +28,7 @@ func TestGetUid(t *testing.T) {
 	var list = models.FacebookUpdateEntry{UID: "123"}
 	var token = &models.FacebookToken{Token: "123"}
 
-	var result = GetUid(list, token, fbClient, nil)
+	var result = GetUid(list, token, fbClient, &tracing.Tracing{})
 
 	assert.Equal(t, 200, result.Code)
 }
@@ -36,7 +37,7 @@ func TestGetToken(t *testing.T) {
 	fbClient := new(fbClientMock)
 	fbClient.On("GetRequest").Return("{\"access_token\":\"1449629478400719\",\"token_type\":\"bearer\"}", 200)
 
-	var result = GetToken(fbClient, nil)
+	var result = GetToken(fbClient, &tracing.Tracing{})
 	assert.Equal(t, "1449629478400719", result.Token)
 	assert.Equal(t, "bearer", result.Type)
 }

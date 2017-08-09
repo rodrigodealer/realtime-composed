@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/rodrigodealer/realtime/models"
+	"github.com/rodrigodealer/realtime/tracing"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,7 +73,8 @@ func TestIndexUserAndGetIt(t *testing.T) {
 	var userID = "1"
 	var userName = "Test"
 	facebookUser := &models.FacebookUser{ID: userID, Name: userName}
-	conn.IndexUser(indexName, facebookUser, nil)
+	trac := &tracing.Tracing{}
+	conn.IndexUser(indexName, facebookUser, trac)
 	time.Sleep(1 * time.Second)
 
 	var retrievedUser, _ = conn.GetUser(indexName, userID)

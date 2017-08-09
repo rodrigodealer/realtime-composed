@@ -3,9 +3,9 @@ package handlers
 import (
 	"errors"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rodrigodealer/realtime/models"
 	"github.com/rodrigodealer/realtime/services"
+	"github.com/rodrigodealer/realtime/tracing"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -27,7 +27,7 @@ func (o clientMock) GetUser(index string, ID string) (models.FacebookUser, error
 	return facebookUser, args.Error(1)
 }
 
-func (o clientMock) IndexUser(index string, user *models.FacebookUser, span opentracing.Span) {
+func (o clientMock) IndexUser(index string, user *models.FacebookUser, span *tracing.Tracing) {
 }
 
 type fbClientMock struct {

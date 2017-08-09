@@ -3,8 +3,8 @@ package es
 import (
 	"testing"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rodrigodealer/realtime/models"
+	"github.com/rodrigodealer/realtime/tracing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -49,5 +49,5 @@ func (o clientMock) GetUser(index string, ID string) (models.FacebookUser, error
 	return facebookUser, nil
 }
 
-func (o clientMock) IndexUser(index string, user *models.FacebookUser, span opentracing.Span) {
+func (o clientMock) IndexUser(index string, user *models.FacebookUser, span *tracing.Tracing) {
 }
